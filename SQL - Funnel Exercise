@@ -1,3 +1,29 @@
+ SELECT question_text, COUNT(DISTINCT user_id)
+ FROM survey_responses
+ GROUP BY question_text;
+ 
+ 
+ SELECT modal_text,
+  COUNT(DISTINCT CASE
+    WHEN ab_group = 'control' THEN user_id
+    END) AS 'control_clicks',
+  COUNT(DISTINCT CASE
+    WHEN ab_group = 'variant' THEN user_id
+    END) AS 'variant_clicks'
+FROM onboarding_modals
+GROUP BY 1
+ORDER BY 1;
+
+
+ SELECT DISTINCT b.browse_date, b.user_id, c.user_id IS NOT NULL AS 'is_checkout', p.user_id IS NOT NULL AS 'is_purchase'
+ FROM browse AS 'b'
+ LEFT JOIN checkout AS 'c'
+  ON c.user_id = b.user_id
+LEFT JOIN purchase AS 'p'
+  ON p.user_id = c.user_id
+LIMIT 50;
+
+
 WITH funnels AS (
   SELECT DISTINCT b.browse_date,
      b.user_id,
